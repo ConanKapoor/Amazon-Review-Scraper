@@ -278,11 +278,12 @@ try:
                 logs.write("Exception error - %s \n\n" %(newurl))
                 pass
 
-    # Closing the workbook and logs
-    print("\n>>> Total number of reviews scraped - %s\n"%(count))
-    logs.write("End of logs - Complete Scraping done")
-    workbook.close()
-    logs.close()
+        # Closing the workbook and logs
+        print("\n>>> Total number of reviews scraped - %s\n"%(count))
+        logs.write("End of logs - Complete Scraping done")
+        workbook.close()
+        logs.close()
+        time.sleep(5)
 
 except Exception:
     print("    >!>!> Exceptioncaught - skipping to next link.(Check logs.txt)")
