@@ -98,15 +98,50 @@ for linkno in range(1,LastPage+1):
         AttributeHTML = review.find("a",{"data-hook":"format-strip"})
         Attribute = AttributeHTML.text
 
+        # Is purchase verified?
+        VerifiedHTML = review.find("span",{"data-hook":"avp-badge"})
+        Verified = VerifiedHTML.text
+
+        # Review Heading.
+        HeadingHTML = review.find("a",{"data-hook":"review-title"})
+        Heading = HeadingHTML.text
+
+        # Is image present in review?
+        ImageHTML = review.find("div",{"class":"review-image-tile-section"})
+
+        # Review Description
+        DescriptionHTML = review.find("span",{"data-hook":"review-body"})
+        Description = DescriptionHTML.text
+
+        # Number of comments
+        CommentsHTML = review.find("span",{"class":"review-comment-total"})
+        Comments = CommentsHTML.text
+
         # Printing Data
         print("\n    Author : %s"%(Author))
         print("    Rating : %s"%(Rating))
         print("    Date   : %s\n"%(Date))
+
         if Attribute is not None:
             print("    Attribute Available : Yes")
             print("    Attribute   : %s\n"%(Attribute))
         else:
             print("    Attribute Available : No\n")
+
+        if Verified == "Verified Purchase":
+            print("    Verified Purchase : Yes\n")
+        else:
+            print("    Verified Purchase : No\n")
+
+        if ImageHTML is not None:
+            print("    Image Present : Yes\n")
+        else:
+            print("    Image Present : No\n")
+
+        print("    Heading  : %s"%(Heading))
+        print("    Description  : %s\n"%(Description))
+        print("    Number of Comments : %s"%(Comments))
+
         time.sleep(3000)
 
     # except Exception:
