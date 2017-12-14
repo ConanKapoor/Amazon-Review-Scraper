@@ -10,6 +10,7 @@ Github : https://github.com/ConanKapoor/Amazon-Review-Scraper
 
 # Importing Essesnsials.
 from bs4 import BeautifulSoup
+import xlsxwriter
 import urllib.request
 import os,time
 import sys
@@ -52,7 +53,7 @@ soup = BeautifulSoup(response.read(),"lxml")
 # Using BeautifulSoup to find number of Paginations.
 Pagination = soup.find("ul", {"class": "a-pagination"})
 Pages = Pagination.find_all("li",{"class": "page-button"})
-LastPage = int(Pages[len(Pages)-1].text)
+LastPage = int(Pages[len(Pages)-1].text.replace(",",""))
 
 ############ Now LastPage contains the number of links to scrape ##############
 ###################### Main Scraping Logic Starts Below #######################
@@ -62,92 +63,121 @@ print ("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 print (">>> Product Name - %s "%(ProductName))
 print(">>> No of Review Pages - %s\n"%(LastPage))
 
+# Initiating XLSX file
+workbook = xlsxwriter.Workbook('Reviews.xlsx')
+worksheet = workbook.add_worksheet()
+
+bold = workbook.add_format({'bold': True})
+
+worksheet.write('A1', 'Author', bold)
+worksheet.write('B1', 'Rating', bold)
+worksheet.write('C1', 'Date', bold)
+worksheet.write('D1', 'Attribute Available', bold)
+worksheet.write('E1', 'Attribute', bold)
+worksheet.write('F1', 'Verified Purchase', bold)
+worksheet.write('G1', 'Image Present', bold)
+worksheet.write('H1', 'Heading', bold)
+worksheet.write('I1', 'Description', bold)
+worksheet.write('J1', 'Number of Comments', bold)
+worksheet.write('K1', 'Upvotes', bold)
+
+count = 1
 for linkno in range(1,LastPage+1):
-    # try:
-    # Making custom URL.
-    print("\n>>> Scraping Review Page - %s"%(linkno))
-    newurl = tempurl + "/ref=cm_cr_arp_d_paging_btm_" + str(linkno) +"?showViewpoints=1&pageNumber=" + str(linkno)
-    print("    Link - %s"%(newurl))
+    try:
+        # Making custom URL.
+        print("\n>>> Scraping Review Page - %s"%(linkno))
+        newurl = tempurl + "/ref=cm_cr_arp_d_paging_btm_" + str(linkno) +"?showViewpoints=1&pageNumber=" + str(linkno)
+        print("    Link - %s"%(newurl))
 
-    # Collecting html content.
-    request = urllib.request.Request(newurl)
-    response = urllib.request.urlopen(request)
+        # Collecting html content.
+        request = urllib.request.Request(newurl)
+        response = urllib.request.urlopen(request)
 
-    # Using BeautifulSoup to parse html object response.
-    soup = BeautifulSoup(response.read(),"lxml")
+        # Using BeautifulSoup to parse html object response.
+        soup = BeautifulSoup(response.read(),"lxml")
 
-    # Collecting Reviews.
-    ReviewList = soup.find("div",{"id": "cm_cr-review_list"})
-    Reviews = soup.find_all("div",{"class":"a-section review"})
+        # Collecting Reviews.
+        ReviewList = soup.find("div",{"id": "cm_cr-review_list"})
+        Reviews = soup.find_all("div",{"class":"a-section review"})
 
-    # Scraping different features from all reviews.
-    for review in Reviews:
-        # Scraping Author.
-        AuthorHTML = review.find("a",{"data-hook":"review-author"})
-        Author = AuthorHTML.text
+        # Scraping different features from all reviews.
+        for review in Reviews:
+            # Scraping Author.
+            AuthorHTML = review.find("a",{"data-hook":"review-author"})
+            Author = AuthorHTML.text
 
-        # Scraping Rating.
-        RatingHTML = review.find("span",{"class": "a-icon-alt"})
-        Rating = int(RatingHTML.text[0])
+            # Scraping Rating.
+            RatingHTML = review.find("span",{"class": "a-icon-alt"})
+            Rating = int(RatingHTML.text[0])
 
-        # Scraping Date.
-        DateHTML = review.find("span",{"data-hook":"review-date"})
-        Date = DateHTML.text[3:]
+            # Scraping Date.
+            DateHTML = review.find("span",{"data-hook":"review-date"})
+            Date = DateHTML.text[3:]
 
-        # Scraping Attribute (if there)
-        AttributeHTML = review.find("a",{"data-hook":"format-strip"})
-        Attribute = AttributeHTML.text
+            # Scraping Attribute (if there)
+            AttributeHTML = review.find("a",{"data-hook":"format-strip"})
+            Attribute = AttributeHTML.text
 
-        # Is purchase verified?
-        VerifiedHTML = review.find("span",{"data-hook":"avp-badge"})
-        Verified = VerifiedHTML.text
+            # Is purchase verified?
+            VerifiedHTML = review.find("span",{"data-hook":"avp-badge"})
+            Verified = VerifiedHTML.text
 
-        # Review Heading.
-        HeadingHTML = review.find("a",{"data-hook":"review-title"})
-        Heading = HeadingHTML.text
+            # Review Heading.
+            HeadingHTML = review.find("a",{"data-hook":"review-title"})
+            Heading = HeadingHTML.text
 
-        # Is image present in review?
-        ImageHTML = review.find("div",{"class":"review-image-tile-section"})
+            # Is image present in review?
+            ImageHTML = review.find("div",{"class":"review-image-tile-section"})
 
-        # Review Description
-        DescriptionHTML = review.find("span",{"data-hook":"review-body"})
-        Description = DescriptionHTML.text
+            # Review Description
+            DescriptionHTML = review.find("span",{"data-hook":"review-body"})
+            Description = DescriptionHTML.text
 
-        # Number of comments
-        CommentsHTML = review.find("span",{"class":"review-comment-total"})
-        Comments = CommentsHTML.text
+            # Number of comments
+            CommentsHTML = review.find("span",{"class":"review-comment-total"})
+            Comments = CommentsHTML.text
 
-        # Printing Data
-        print("\n    Author : %s"%(Author))
-        print("    Rating : %s"%(Rating))
-        print("    Date   : %s\n"%(Date))
+            # Number of upvotes
+            UpvotesHTML = review.find("span",{"class":"review-votes"})
 
-        if Attribute is not None:
-            print("    Attribute Available : Yes")
-            print("    Attribute   : %s\n"%(Attribute))
-        else:
-            print("    Attribute Available : No\n")
+            # Printing Data
+            print("\n    Author : %s"%(Author))
+            print("    Rating : %s"%(Rating))
+            print("    Date   : %s\n"%(Date))
 
-        if Verified == "Verified Purchase":
-            print("    Verified Purchase : Yes\n")
-        else:
-            print("    Verified Purchase : No\n")
+            if Attribute is not None:
+                print("    Attribute Available : Yes")
+                print("    Attribute   : %s\n"%(Attribute))
+            else:
+                print("    Attribute Available : No\n")
 
-        if ImageHTML is not None:
-            print("    Image Present : Yes\n")
-        else:
-            print("    Image Present : No\n")
+            if Verified == "Verified Purchase":
+                print("    Verified Purchase : Yes\n")
+            else:
+                print("    Verified Purchase : No\n")
 
-        print("    Heading  : %s"%(Heading))
-        print("    Description  : %s\n"%(Description))
-        print("    Number of Comments : %s"%(Comments))
+            if ImageHTML is not None:
+                print("    Image Present : Yes\n")
+            else:
+                print("    Image Present : No\n")
 
-        time.sleep(3000)
+            print("    Heading  : %s"%(Heading))
+            print("    Description  : %s\n"%(Description))
+            print("    Number of Comments : %s"%(Comments))
 
-    # except Exception:
-    #     print("\t>!>!> Exceptioncaught - skipping to next link.(Check logs.txt)\n")
-    #     newurl = tempurl + "/ref=cm_cr_arp_d_paging_btm_" + str(linkno) +"?showViewpoints=1&pageNumber=" + str(linkno)
-    #     logs.write("Exception error - %s \n\n" %(newurl))
-    #     pass
+            if UpvotesHTML is None:
+                print("    Upvotes : 0")
+            elif UpvotesHTML.text.split(" ")[6] == "One":
+                print("    Upvotes : 1")
+            else:
+                Upvotes = UpvotesHTML.text
+                Upvotes = Upvotes.split(" ")
+                print("    Upvotes : %s"%(Upvotes[6]))
+
+    except Exception:
+        print("\t>!>!> Exceptioncaught - skipping to next link.(Check logs.txt)\n")
+        newurl = tempurl + "/ref=cm_cr_arp_d_paging_btm_" + str(linkno) +"?showViewpoints=1&pageNumber=" + str(linkno)
+        logs.write("Exception error - %s \n\n" %(newurl))
+        pass
 
 logs.close()
