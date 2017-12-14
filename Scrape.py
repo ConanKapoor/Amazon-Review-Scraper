@@ -34,7 +34,8 @@ print ("\t\t>>>>>> Author : ConanKapoor  <<<<<<\n")
 
 # Taking url as input.
 url = input(">>> Please Enter the REVIEW URL for the product : ")
-tempurl = url.split("/")
+tempurl= url.split("/")
+ProductName = tempurl[3]
 tempurl = tempurl[0:6]
 tempurl = '/'.join(tempurl)
 
@@ -51,19 +52,27 @@ soup = BeautifulSoup(response.read(),"lxml")
 # Using BeautifulSoup to find number of Paginations
 Pagination = soup.find("ul", {"class": "a-pagination"})
 Pages = Pagination.find_all("li",{"class": "page-button"})
-LastPage = Pages[len(Pages)-1].text
+LastPage = int(Pages[len(Pages)-1].text)
 print("\n\n>>> No of Review Pages - %s"%(LastPage))
 
 ############ Now LastPage contains the number of links to scrape ##############
+###################### Main Scraping Logic Starts Below #######################
 
-count = 1
-for link in links:
+print ("\n\n\t\t>>>>>> Review Scraping Starts  <<<<<<\n")
+print (">>> Product Name - %s \n"%(ProductName))
+
+for linkno in range(1,LastPage+1):
     try:
+        print("\n>>> Scraping Review Page - %s"%(linkno))
+        newurl = tempurl + "/ref=cm_cr_arp_d_paging_btm_" + str(linkno) +"?showViewpoints=1&pageNumber=" + str(linkno)
+        print("    Link - %s"%(newurl))
+        request = urllib.request.Request(newurl)
+        response = urllib.request.urlopen(request)
 
     except Exception:
         print("\t>!>!> Exceptioncaught - skipping to next link.(Check logs.txt)\n")
-        logsEng.write("Exception error - %s \n\n" %(link))
-        count = count+1
+        newurl = tempurl + "/ref=cm_cr_arp_d_paging_btm_" + str(linkno) +"?showViewpoints=1&pageNumber=" + str(linkno)
+        logs.write("Exception error - %s \n\n" %(newurl))
         pass
 
-logsEng.close()
+logs.close()
