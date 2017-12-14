@@ -11,6 +11,7 @@ Github : https://github.com/ConanKapoor/Amazon-Review-Scraper
 # Importing Essesnsials.
 from bs4 import BeautifulSoup
 import xlsxwriter
+from pyfiglet import Figlet
 import urllib.request
 import os,time
 import sys
@@ -29,9 +30,11 @@ else:
 logs = open('logs.txt','w')
 logs.write("Following links threw errors. Have to do manually -->\n\n")
 
-# Printing unecessary information to look cool.
-print ("\t\t>>>>>> Amazon Review Scraper <<<<<<")
-print ("\t\t>>>>>> Author : ConanKapoor  <<<<<<\n")
+# Printing unecessary information for 'wanna be cool' people.
+banner = Figlet(font='slant')
+print (banner.renderText('Amazon Scraper'))
+print (">>>>>> Amazon Review Scraper <<<<<<")
+print (">>>>>> Author : ConanKapoor  <<<<<<\n")
 
 # Taking url as input.
 url = input(">>> Please Enter the REVIEW URL for the product : \n    ")
@@ -64,7 +67,7 @@ print (">>> Product Name - %s "%(ProductName))
 print(">>> No of Review Pages - %s\n"%(LastPage))
 
 # Initiating XLSX file
-workbook = xlsxwriter.Workbook('Reviews.xlsx')
+workbook = xlsxwriter.Workbook('Output/Reviews.xlsx',{'tmpdir': 'Output/TempReviews.xlsx'})
 worksheet = workbook.add_worksheet()
 
 bold = workbook.add_format({'bold': True})
