@@ -1,11 +1,10 @@
-# Author - Shivam Kapoor (kapoor.shivam88@gmail.com)
-
 #########################################
-'''
-A simple script made in a day to scrape Amazon reviews for future NLP
-related research.
-Github : https://github.com/ConanKapoor/Amazon-Review-Scraper
-'''
+# Author - Shivam Kapoor (kapoor.shivam88@gmail.com)
+#
+# A simple script made in a day to scrape Amazon reviews for future NLP
+# related research.
+#
+# Github : https://github.com/ConanKapoor/Amazon-Review-Scraper
 #########################################
 
 # Importing Essesnsials.
@@ -264,3 +263,5 @@ except KeyboardInterrupt:
     workbook.close()
     logs.close()
     sys.exit()
+
+############################### END OF SCRIPT :) ##############################

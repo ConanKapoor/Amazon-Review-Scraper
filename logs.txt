@@ -1,5 +1,0 @@
-Following links threw errors. Have to do manually -->
-
-Exception error - https://www.amazon.in/Nikon-D5300-24-2MP-Digital-18-140mm/product-reviews/B00K0AUCQ2/ref=cm_cr_arp_d_paging_btm_7?showViewpoints=1&pageNumber=7 
-
-End of logs - Abruptly Ended
