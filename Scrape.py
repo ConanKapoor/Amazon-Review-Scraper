@@ -101,7 +101,11 @@ for linkno in range(1,LastPage+1):
         Reviews = soup.find_all("div",{"class":"a-section review"})
 
         # Scraping different features from all reviews.
+        rows = 1
         for review in Reviews:
+            print("\n\n    >>> Scraping Review number - %s"%(count))
+            count=count+1
+
             # Scraping Author.
             AuthorHTML = review.find("a",{"data-hook":"review-author"})
             Author = AuthorHTML.text
@@ -140,39 +144,76 @@ for linkno in range(1,LastPage+1):
             # Number of upvotes
             UpvotesHTML = review.find("span",{"class":"review-votes"})
 
-            # Printing Data
-            print("\n    Author : %s"%(Author))
-            print("    Rating : %s"%(Rating))
-            print("    Date   : %s\n"%(Date))
+            # Printing Data into Terminal
+            print("\n        Author : %s"%(Author))
+            print("        Rating : %s"%(Rating))
+            print("        Date   : %s\n"%(Date))
 
             if Attribute is not None:
-                print("    Attribute Available : Yes")
-                print("    Attribute   : %s\n"%(Attribute))
+                print("        Attribute Available : Yes")
+                print("        Attribute   : %s\n"%(Attribute))
             else:
-                print("    Attribute Available : No\n")
+                print("        Attribute Available : No\n")
 
             if Verified == "Verified Purchase":
-                print("    Verified Purchase : Yes\n")
+                print("        Verified Purchase : Yes\n")
             else:
-                print("    Verified Purchase : No\n")
+                print("        Verified Purchase : No\n")
 
             if ImageHTML is not None:
-                print("    Image Present : Yes\n")
+                print("        Image Present : Yes\n")
             else:
-                print("    Image Present : No\n")
+                print("        Image Present : No\n")
 
-            print("    Heading  : %s"%(Heading))
-            print("    Description  : %s\n"%(Description))
-            print("    Number of Comments : %s"%(Comments))
+            print("        Heading  : %s"%(Heading))
+            print("        Description  : %s\n"%(Description))
+            print("        Number of Comments : %s"%(Comments))
 
             if UpvotesHTML is None:
-                print("    Upvotes : 0")
+                print("        Upvotes : 0")
             elif UpvotesHTML.text.split(" ")[6] == "One":
-                print("    Upvotes : 1")
+                print("        Upvotes : 1")
             else:
                 Upvotes = UpvotesHTML.text
                 Upvotes = Upvotes.split(" ")
-                print("    Upvotes : %s"%(Upvotes[6]))
+                print("        Upvotes : %s"%(Upvotes[6]))
+
+        # Saving Data into XLSX
+        worksheet.write(rows, 1, Author)
+        worksheet.write(rows, 2, Rating)
+        worksheet.write(rows, 3, Date)
+
+        if Attribute is not None:
+            worksheet.write(rows, 4, "Yes")
+            worksheet.write(rows, 5, Attribute)
+        else:
+            worksheet.write(rows, 4, "No")
+            worksheet.write(rows, 5, None)
+
+        if Verified == "Verified Purchase":
+            worksheet.write(rows, 6, "Yes")
+        else:
+            worksheet.write(rows, 6, "No")
+
+        if ImageHTML is not None:
+            worksheet.write(rows, 7, "Yes")
+        else:
+            worksheet.write(rows, 7, "No")
+
+        worksheet.write(rows, 8, Heading)
+        worksheet.write(rows, 9, Description)
+        worksheet.write(rows, 10, Comments)
+
+        if UpvotesHTML is None:
+            worksheet.write(rows, 11, 0)
+        elif UpvotesHTML.text.split(" ")[6] == "One":
+            worksheet.write(rows, 11, 1)
+        else:
+            Upvotes = UpvotesHTML.text
+            Upvotes = Upvotes.split(" ")
+            worksheet.write(rows, 11, Upvotes[6])
+
+        rows = rows + 1
 
     except Exception:
         print("\t>!>!> Exceptioncaught - skipping to next link.(Check logs.txt)\n")
@@ -180,4 +221,6 @@ for linkno in range(1,LastPage+1):
         logs.write("Exception error - %s \n\n" %(newurl))
         pass
 
+# Closing the workbook and logs
+workbook.close()
 logs.close()
