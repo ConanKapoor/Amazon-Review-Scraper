@@ -1,5 +1,0 @@
-Following links threw errors. Have to do manually -->
-
-Exception error - https://www.amazon.in/HOKIPO-Over-Door-Hanger-White/product-reviews/B01N4PLD6A/ref=cm_cr_arp_d_paging_btm_3?showViewpoints=1&pageNumber=3 
-
-End of logs - Complete Scraping done

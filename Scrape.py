@@ -223,7 +223,7 @@ try:
                         Upvotes = UpvotesHTML.text
                         Upvotes = Upvotes.split(" ")
                         print("        Upvotes : %s"%(Upvotes[6]))
-                '''
+                    '''
 
                     # Saving Data into XLSX
                     worksheet.write(rows, 0, Author)
@@ -282,8 +282,9 @@ try:
         print("\n>>> Total number of reviews scraped - %s\n"%(count))
         logs.write("End of logs - Complete Scraping done")
         workbook.close()
-        logs.close()
         time.sleep(5)
+
+    logs.close()
 
 except Exception:
     print("    >!>!> Exceptioncaught - skipping to next link.(Check logs.txt)")
